@@ -1,0 +1,11 @@
+services:
+  fcs-bff:
+    build:
+      context: .
+      dockerfile: src/Fcs.Bff.WebApi/Dockerfile
+    container_name: fcs-bff
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:8080
+    ports:
+      - "5004:8080"

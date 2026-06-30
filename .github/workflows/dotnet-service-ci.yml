@@ -1,0 +1,32 @@
+name: fcs-bff CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+  security-events: write
+  packages: write
+
+jobs:
+  ci:
+    uses: group10-tc-01/fcs-pipelines/.github/workflows/dotnet-service-ci.yml@main
+    with:
+      service_name: fcs-bff
+      dotnet_version: 8.0.x
+      solution_path: Fcs.Bff.slnx
+      unit_tests_path: tests/Fcs.Bff.UnitTests/Fcs.Bff.UnitTests.csproj
+      integration_tests_path: tests/Fcs.Bff.IntegratedTests/Fcs.Bff.IntegratedTests.csproj
+      coverage_threshold: 80
+      run_sonar: true
+      sonar_project_key: group10-tc-01_fcs-bff
+      sonar_organization: group10-tc-01
+      dockerfile_path: src/Fcs.Bff.WebApi/Dockerfile
+      docker_context: .
+    secrets: inherit
