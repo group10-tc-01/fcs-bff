@@ -1,4 +1,4 @@
-name: fcs-bff CD
+name: fcs-bff Delivery To Coolify
 
 on:
   push:
@@ -8,23 +8,18 @@ on:
 
 permissions:
   contents: read
-  id-token: write
+  packages: write
 
 jobs:
   delivery:
-    uses: group10-tc-01/fcs-pipelines/.github/workflows/dotnet-service-delivery.yml@main
+    uses: group10-tc-01/fcs-pipelines/.github/workflows/coolify-image-delivery.yml@main
     with:
-      service_name: fcs-bff
+      app_name: fcs-bff
+      image_registry: ghcr.io
+      image_owner: group10-tc-01
       image_name: fcs-bff
       dockerfile_path: src/Fcs.Bff.WebApi/Dockerfile
       docker_context: .
-      azure_container_registry_name: ${{ vars.ACR_NAME }}
-      aks_resource_group: ${{ vars.AKS_RESOURCE_GROUP }}
-      aks_cluster_name: ${{ vars.AKS_CLUSTER_NAME }}
-      k8s_namespace: fcs-bff
-      k8s_deployment_name: fcs-bff
-      k8s_container_name: fcs-bff
-      k8s_manifests_path: k8s
-      healthcheck_url: ${{ vars.FCS_BFF_HEALTHCHECK_URL }}
-      deploy_to_aks: false
+      coolify_base_url: ${{ vars.COOLIFY_BASE_URL }}
+      coolify_resource_uuid: ${{ vars.COOLIFY_RESOURCE_UUID }}
     secrets: inherit
