@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bff-config
+  namespace: fcs-bff
+data:
+  ASPNETCORE_ENVIRONMENT: Production
+  ASPNETCORE_URLS: http://+:8080
+  HttpsRedirection__Enabled: "false"
+  Cors__AllowedOrigins__0: https://fcs-web.flaviojcf.com.br
+  DownstreamServices__IdentityBaseUrl: http://fcs-identity-service.fcs-identity.svc.cluster.local:8080
+  DownstreamServices__CampaignBaseUrl: http://fcs-campaign-service.fcs-campaigns.svc.cluster.local:8080
+  DownstreamServices__DonationsBaseUrl: http://fcs-donations-service.fcs-donations.svc.cluster.local:8080
+  Observability__ServiceName: Fcs.Bff
+  Observability__EnableOtlpExporter: "true"
+  Observability__OtlpEndpoint: http://otel-collector-service.fcs-infra.svc.cluster.local:4318
+  Observability__OtlpAuthHeader: ""
