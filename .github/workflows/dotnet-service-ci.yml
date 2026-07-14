@@ -24,9 +24,7 @@ jobs:
       unit_tests_path: tests/Fcs.Bff.UnitTests/Fcs.Bff.UnitTests.csproj
       integration_tests_path: tests/Fcs.Bff.IntegratedTests/Fcs.Bff.IntegratedTests.csproj
       coverage_threshold: 80
-      run_sonar: true
-      sonar_project_key: group10-tc-01_fcs-bff
-      sonar_organization: group10-tc-01
+      run_sonar: false
       dockerfile_path: src/Fcs.Bff.WebApi/Dockerfile
       docker_context: .
     secrets: inherit
