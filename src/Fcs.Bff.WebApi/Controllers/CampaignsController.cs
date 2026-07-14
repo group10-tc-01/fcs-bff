@@ -18,7 +18,7 @@ public sealed class CampaignsController : ProxyControllerBase
     [HttpGet("active")]
     public Task<IActionResult> GetActiveForDonors(CancellationToken cancellationToken)
     {
-        return ForwardAsync(DownstreamServiceNames.Campaign, "/api/v1/transparency/campaigns", HttpMethod.Get, cancellationToken);
+        return ForwardAsync(DownstreamServiceNames.Campaign, "/api/v1/campaigns/active", HttpMethod.Get, cancellationToken);
     }
 
     [HttpGet("{id:guid}")]

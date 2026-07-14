@@ -140,7 +140,10 @@ public sealed class Program
         });
         app.MapPrometheusScrapingEndpoint("/metrics");
 
-        if (!app.Environment.IsDevelopment() && app.Environment.EnvironmentName != "Docker")
+        var enableHttpsRedirection = builder.Configuration.GetValue("HttpsRedirection:Enabled", true);
+        if (!app.Environment.IsDevelopment()
+            && app.Environment.EnvironmentName != "Docker"
+            && enableHttpsRedirection)
         {
             app.UseHttpsRedirection();
         }

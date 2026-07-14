@@ -15,12 +15,6 @@ public sealed class DonationsController : ProxyControllerBase
         return ForwardAsync(DownstreamServiceNames.Donations, "/api/v1/donations", HttpMethod.Get, cancellationToken);
     }
 
-    [HttpGet("admin")]
-    public Task<IActionResult> GetAdmin(CancellationToken cancellationToken)
-    {
-        return ForwardAsync(DownstreamServiceNames.Donations, "/api/v1/donations/admin", HttpMethod.Get, cancellationToken);
-    }
-
     [HttpGet("{id:guid}")]
     public Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {

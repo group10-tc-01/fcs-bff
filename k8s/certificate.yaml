@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: fcs-bff-tls
+  namespace: fcs-bff
+spec:
+  secretName: fcs-bff-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-production
+  dnsNames:
+    - fcs-bff.flaviojcf.com.br
