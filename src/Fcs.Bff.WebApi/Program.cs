@@ -1,6 +1,7 @@
 using Asp.Versioning;
 using Fcs.Bff.WebApi.Proxy;
 using Fcs.Bff.WebApi.Settings;
+using Fcs.Bff.WebApi.Swagger;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using OpenTelemetry.Metrics;
@@ -31,7 +32,7 @@ public sealed class Program
             });
 
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddBffSwagger(builder.Configuration);
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddRouting(options => options.LowercaseUrls = true);
         builder.Services.AddHealthChecks();
