@@ -11,6 +11,46 @@ namespace Fcs.Bff.IntegratedTests;
 
 public sealed class ProxyForwardingTests
 {
+    [Theory]
+    [InlineData("POST", "/api/v1/auth/register/donor", "/api/v1/auth/register/donor")]
+    [InlineData("POST", "/api/v1/auth/login", "/api/v1/auth/login")]
+    [InlineData("POST", "/api/v1/auth/refresh", "/api/v1/auth/refresh")]
+    [InlineData("POST", "/api/v1/auth/logout", "/api/v1/auth/logout")]
+    [InlineData("GET", "/api/v1/me", "/api/v1/me")]
+    [InlineData("GET", "/api/v1/donations", "/api/v1/donations")]
+    [InlineData("GET", "/api/v1/donations/7a8cb347-82e4-4bc9-a2d8-8767aafec38e", "/api/v1/donations/7a8cb347-82e4-4bc9-a2d8-8767aafec38e")]
+    [InlineData("POST", "/api/v1/donations", "/api/v1/donations")]
+    [InlineData("GET", "/api/v1/campaigns", "/api/v1/campaigns")]
+    [InlineData("GET", "/api/v1/campaigns/active", "/api/v1/campaigns/active")]
+    [InlineData("GET", "/api/v1/campaigns/7a8cb347-82e4-4bc9-a2d8-8767aafec38e", "/api/v1/campaigns/7a8cb347-82e4-4bc9-a2d8-8767aafec38e")]
+    [InlineData("POST", "/api/v1/campaigns", "/api/v1/campaigns")]
+    [InlineData("PUT", "/api/v1/campaigns/7a8cb347-82e4-4bc9-a2d8-8767aafec38e", "/api/v1/campaigns/7a8cb347-82e4-4bc9-a2d8-8767aafec38e")]
+    [InlineData("PATCH", "/api/v1/campaigns/7a8cb347-82e4-4bc9-a2d8-8767aafec38e/status", "/api/v1/campaigns/7a8cb347-82e4-4bc9-a2d8-8767aafec38e/status")]
+    [InlineData("PATCH", "/api/v1/campaigns/7a8cb347-82e4-4bc9-a2d8-8767aafec38e/cancel", "/api/v1/campaigns/7a8cb347-82e4-4bc9-a2d8-8767aafec38e/status")]
+    public async Task ProxyEndpoints_ForwardRequestsToTheirDownstreamPath(
+        string method,
+        string path,
+        string expectedDownstreamPath)
+    {
+        using var downstream = new RecordingHttpMessageHandler();
+        using var factory = CreateFactory(downstream);
+        using var client = factory.CreateClient();
+        using var request = new HttpRequestMessage(new HttpMethod(method), path);
+
+        if (method is "POST" or "PUT" or "PATCH")
+        {
+            request.Content = new StringContent("{\"value\":\"payload\"}", Encoding.UTF8, "application/json");
+        }
+
+        var response = await client.SendAsync(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        downstream.Requests.Should().ContainSingle();
+        var forwardedRequest = downstream.Requests.Single();
+        forwardedRequest.Method.Method.Should().Be(method);
+        forwardedRequest.RequestUri!.PathAndQuery.Should().Be(expectedDownstreamPath);
+    }
+
     [Fact]
     public async Task TransparencyCampaigns_ForwardsQueryAndAuthHeaders()
     {

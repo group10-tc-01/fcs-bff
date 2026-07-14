@@ -1,0 +1,43 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fcs-bff
+  namespace: fcs-bff
+spec:
+  ingressClassName: fcs-traefik
+  tls:
+    - hosts:
+        - fcs-bff.flaviojcf.com.br
+      secretName: fcs-bff-tls
+  rules:
+    - host: fcs-bff.flaviojcf.com.br
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: fcs-bff-service
+                port:
+                  number: 8080
+          - path: /swagger
+            pathType: Prefix
+            backend:
+              service:
+                name: fcs-bff-service
+                port:
+                  number: 8080
+          - path: /health
+            pathType: Prefix
+            backend:
+              service:
+                name: fcs-bff-service
+                port:
+                  number: 8080
+          - path: /metrics
+            pathType: Prefix
+            backend:
+              service:
+                name: fcs-bff-service
+                port:
+                  number: 8080
