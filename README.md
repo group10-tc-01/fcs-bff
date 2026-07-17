@@ -2,7 +2,7 @@
 
 Backend for Frontend da plataforma **Conexão Solidária**. O serviço atua como fachada HTTP para o `fcs-web`, encaminhando chamadas para `fcs-identity`, `fcs-campaign` e `fcs-donations`.
 
-> Serviço que compõe o MVP da Conexão Solidária junto a `fcs-identity`, `fcs-campaign`, `fcs-donations`, `fcs-donation-worker`, `fcs-audit-logs`, `fcs-web`, `fcs-infra` e `fcs-pipelines`.
+> Serviço que compõe o MVP da Conexão Solidária junto a `fcs-identity`, `fcs-campaign`, `fcs-donations`, `fcs-donation-worker`, `fcs-notifications`, `fcs-audit-logs`, `fcs-web`, `fcs-infra` e `fcs-pipelines`.
 
 ---
 
