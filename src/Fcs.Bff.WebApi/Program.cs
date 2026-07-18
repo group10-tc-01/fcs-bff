@@ -184,9 +184,10 @@ public sealed class Program
                     {
                         options.Endpoint = new Uri($"{settings.OtlpEndpoint}/v1/traces");
                         options.Protocol = OtlpExportProtocol.HttpProtobuf;
-                        options.Headers = string.IsNullOrWhiteSpace(settings.OtlpAuthHeader)
-                            ? string.Empty
-                            : $"Authorization={settings.OtlpAuthHeader}";
+                        if (!string.IsNullOrWhiteSpace(settings.OtlpAuthHeader))
+                        {
+                            options.Headers = $"Authorization={settings.OtlpAuthHeader}";
+                        }
                     });
                 }
             })
@@ -205,9 +206,10 @@ public sealed class Program
                     {
                         options.Endpoint = new Uri($"{settings.OtlpEndpoint}/v1/metrics");
                         options.Protocol = OtlpExportProtocol.HttpProtobuf;
-                        options.Headers = string.IsNullOrWhiteSpace(settings.OtlpAuthHeader)
-                            ? string.Empty
-                            : $"Authorization={settings.OtlpAuthHeader}";
+                        if (!string.IsNullOrWhiteSpace(settings.OtlpAuthHeader))
+                        {
+                            options.Headers = $"Authorization={settings.OtlpAuthHeader}";
+                        }
                     });
                 }
             });
@@ -227,9 +229,10 @@ public sealed class Program
             {
                 options.Endpoint = $"{settings.OtlpEndpoint}/v1/logs";
                 options.Protocol = OtlpProtocol.HttpProtobuf;
-                options.Headers = string.IsNullOrWhiteSpace(settings.OtlpAuthHeader)
-                    ? []
-                    : new Dictionary<string, string> { ["Authorization"] = settings.OtlpAuthHeader };
+                if (!string.IsNullOrWhiteSpace(settings.OtlpAuthHeader))
+                {
+                    options.Headers = new Dictionary<string, string> { ["Authorization"] = settings.OtlpAuthHeader };
+                }
                 options.ResourceAttributes = new Dictionary<string, object>
                 {
                     ["service.name"] = settings.ServiceName,
