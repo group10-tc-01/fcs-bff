@@ -1,0 +1,60 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: fcs-bff
+  title: FCS BFF
+  description: Fachada HTTP pública para os clientes da plataforma Conexão Solidária.
+  annotations:
+    github.com/project-slug: group10-tc-01/fcs-bff
+    backstage.io/techdocs-ref: dir:.
+    backstage.io/kubernetes-id: fcs-bff
+    backstage.io/kubernetes-namespace: fcs-bff
+  links:
+    - title: Datadog
+      url: https://us5.datadoghq.com/metric/explorer?query=service%3Afcs-bff
+      icon: dashboard
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/fcs-team
+  system: conexao-solidaria
+  providesApis:
+    - fcs-bff-api
+  dependsOn:
+    - component:default/fcs-identity
+    - component:default/fcs-campaign
+    - component:default/fcs-donations
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: fcs-bff-api
+  title: FCS BFF API
+  description: API pública agregada para os clientes da plataforma.
+spec:
+  type: openapi
+  lifecycle: production
+  owner: group:default/fcs-team
+  system: conexao-solidaria
+  definition: |
+    openapi: 3.0.3
+    info:
+      title: FCS BFF API
+      version: v1
+    paths:
+      /api/v1/auth/login:
+        post:
+          summary: Autentica um usuário
+      /api/v1/transparency/campaigns:
+        get:
+          summary: Lista campanhas ativas
+      /api/v1/campaigns:
+        get:
+          summary: Lista campanhas
+        post:
+          summary: Cria uma campanha
+      /api/v1/donations:
+        get:
+          summary: Lista doações
+        post:
+          summary: Cria uma intenção de doação
