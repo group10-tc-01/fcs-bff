@@ -4,6 +4,7 @@ using Fcs.Bff.WebApi.Settings;
 using Fcs.Bff.WebApi.Swagger;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -179,7 +180,15 @@ public sealed class Program
 
                 if (settings.EnableOtlpExporter && !string.IsNullOrWhiteSpace(settings.OtlpEndpoint))
                 {
-                    tracing.AddOtlpExporter(options => options.Endpoint = new Uri(settings.OtlpEndpoint));
+                    tracing.AddOtlpExporter(options =>
+                    {
+                        options.Endpoint = new Uri($"{settings.OtlpEndpoint}/v1/traces");
+                        options.Protocol = OtlpExportProtocol.HttpProtobuf;
+                        if (!string.IsNullOrWhiteSpace(settings.OtlpAuthHeader))
+                        {
+                            options.Headers = $"Authorization={settings.OtlpAuthHeader}";
+                        }
+                    });
                 }
             })
             .WithMetrics(metrics =>
@@ -193,13 +202,22 @@ public sealed class Program
 
                 if (settings.EnableOtlpExporter && !string.IsNullOrWhiteSpace(settings.OtlpEndpoint))
                 {
-                    metrics.AddOtlpExporter(options => options.Endpoint = new Uri(settings.OtlpEndpoint));
+                    metrics.AddOtlpExporter(options =>
+                    {
+                        options.Endpoint = new Uri($"{settings.OtlpEndpoint}/v1/metrics");
+                        options.Protocol = OtlpExportProtocol.HttpProtobuf;
+                        if (!string.IsNullOrWhiteSpace(settings.OtlpAuthHeader))
+                        {
+                            options.Headers = $"Authorization={settings.OtlpAuthHeader}";
+                        }
+                    });
                 }
             });
 
         var loggerConfiguration = new LoggerConfiguration()
             .MinimumLevel.Information()
             .Enrich.FromLogContext()
+            .Enrich.With<TraceContextEnricher>()
             .Enrich.WithMachineName()
             .Enrich.WithProperty("Application", "Fcs.Bff")
             .Enrich.WithProperty("Environment", environment)
@@ -209,11 +227,12 @@ public sealed class Program
         {
             loggerConfiguration.WriteTo.OpenTelemetry(options =>
             {
-                options.Endpoint = $"{settings.OtlpEndpoint}/otlp/v1/logs";
+                options.Endpoint = $"{settings.OtlpEndpoint}/v1/logs";
                 options.Protocol = OtlpProtocol.HttpProtobuf;
-                options.Headers = string.IsNullOrWhiteSpace(settings.OtlpAuthHeader)
-                    ? []
-                    : new Dictionary<string, string> { ["Authorization"] = settings.OtlpAuthHeader };
+                if (!string.IsNullOrWhiteSpace(settings.OtlpAuthHeader))
+                {
+                    options.Headers = new Dictionary<string, string> { ["Authorization"] = settings.OtlpAuthHeader };
+                }
                 options.ResourceAttributes = new Dictionary<string, object>
                 {
                     ["service.name"] = settings.ServiceName,
